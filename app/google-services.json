@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "626804424531",
+    "project_id": "nfcdocumentscanner",
+    "storage_bucket": "nfcdocumentscanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626804424531:android:1137e4539fa20ec8cfeba6",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "626804424531-5q8t0r1dm04pqgshf3qjj3f2c33h6l8l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2XlOLVcLdsknBzOsFv748VM0yWX99Yec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "626804424531-5q8t0r1dm04pqgshf3qjj3f2c33h6l8l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
