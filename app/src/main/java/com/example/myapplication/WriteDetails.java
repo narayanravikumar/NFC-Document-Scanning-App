@@ -3,14 +3,22 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import static java.lang.Boolean.TRUE;
 
@@ -24,6 +32,12 @@ public class WriteDetails extends AppCompatActivity {
     Button btnAddData, btngetData, btnUpdate, btnDelete, btnviewAll, btnOpenGallery;
     TextView textd, textd1;
     AppCompatImageView imgView;
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef;
+    Details details;
+
+
 
 
     @Override
@@ -93,6 +107,9 @@ public class WriteDetails extends AppCompatActivity {
             public void onClick(View v) {
                   try {
 
+                      myRef = database.getReference("Details");
+                      details = new Details();
+
                     Boolean isInserted = TRUE;
                     if (isInserted == true)
                         Toast.makeText(WriteDetails.this, "PLEASE VERIFY YOUR DATA", Toast.LENGTH_LONG).show();
@@ -117,6 +134,16 @@ public class WriteDetails extends AppCompatActivity {
                     String str4 = editMarks.getText().toString();
                     i1.putExtra("message4", str4);
 
+                      if (TextUtils.isEmpty(str1) && TextUtils.isEmpty(str0) && TextUtils.isEmpty(str2) && TextUtils.isEmpty(str3) && TextUtils.isEmpty(str4)) {
+                          // if the text fields are empty
+                          // then show the below message.
+                          Toast.makeText(WriteDetails.this, "Please add some data.", Toast.LENGTH_SHORT).show();
+                      } else {
+                          // else call the method to add
+                          // data to our database.
+                          addDatatoFirebase(str0, str1 , str2, str3, str4);
+                      }
+
 
                     //i1.putExtra("picture", b);
                     startActivity(i1);
@@ -128,6 +155,38 @@ public class WriteDetails extends AppCompatActivity {
         });
 
 
+    }
+    private void addDatatoFirebase(String id, String Docid, String Usn, String Name, String Marks) {
+        // below 3 lines of code is used to set
+        // data in our object class.
+        details.setId(id);
+        details.setDocId(Docid);
+        details.setUSN(Usn);
+        details.setName(Name);
+        details.setMarks(Marks);
+        // we are use add value event listener method
+        // which is called with database reference.
+        myRef.addValueEventListener(new ValueEventListener() {
+
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // inside the method of on Data change we are setting
+                // our object class to our database reference.
+                // data base reference will sends data to firebase.
+                myRef.setValue(details);
+
+                // after adding this data we are showing toast message.
+                Toast.makeText(WriteDetails.this, "data added", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // if the data is not added or it is cancelled then
+                // we are displaying a failure toast message.
+                Toast.makeText(WriteDetails.this, "Fail to add data " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

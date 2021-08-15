@@ -1,9 +1,5 @@
 package com.example.myapplication;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,9 +10,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -79,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
                                 Toast.makeText(getApplicationContext(),"Login Successful", Toast.LENGTH_LONG).show();
-                                Intent intent= new Intent(MainActivity.this, ScanActivity.class);
+                                Intent intent= new Intent(MainActivity.this, Menu.class);
                                 startActivity(intent);
                             }else{
                                 Toast.makeText(getApplicationContext(),"Login Error", Toast.LENGTH_LONG).show();

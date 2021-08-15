@@ -40,6 +40,7 @@ public class Write extends AppCompatActivity {
     TextView message;
     Button btnWrite, btnext;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
