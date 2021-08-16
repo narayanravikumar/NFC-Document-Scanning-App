@@ -13,7 +13,6 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,11 +21,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 public class ScanActivity extends AppCompatActivity {
-    
+
     public static final String ERROR_DETECTED = "No NFC tag detected!";
     public static final String WRITE_SUCCESS = "Text written to the NFC tag successfully!";
     public static final String WRITE_ERROR = "Error during writing, is the NFC tag close enough to your device?";
@@ -36,6 +41,8 @@ public class ScanActivity extends AppCompatActivity {
     boolean writeMode;
     Tag myTag;
     Context context;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef;
 
 
     TextView tvNFCContent, ida, namea, marks, surname;
@@ -78,12 +85,13 @@ public class ScanActivity extends AppCompatActivity {
             }
         });
 
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (nfcAdapter == null) {
+       nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+       if (nfcAdapter == null) {
             // Stop here, we definitely need NFC
             Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
             finish();
         }
+        Detail();
         readFromIntent(getIntent());
 
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
@@ -100,11 +108,11 @@ public class ScanActivity extends AppCompatActivity {
      ******************************************************************************/
     private void readFromIntent(Intent intent) {
         String action = intent.getAction();
+        NdefMessage[] msgs = null;
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)
                 || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
                 || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-            NdefMessage[] msgs = null;
             if (rawMsgs != null) {
                 msgs = new NdefMessage[rawMsgs.length];
                 for (int i = 0; i < rawMsgs.length; i++) {
@@ -113,6 +121,44 @@ public class ScanActivity extends AppCompatActivity {
             }
             buildTagViews(msgs);
         }
+    }
+
+    public void Detail() {
+        String text = "10";
+        String ida1 = null;
+        String namea1 = null;
+        String surnamea1 = null;
+        String marksa1 = null;
+
+        if (text != null) {
+
+            myRef = FirebaseDatabase.getInstance().getReference("Details");
+
+            //orderByChild("Id").equalTo("10").
+
+            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot datas : dataSnapshot.getChildren()) {
+                        String ida1 = datas.child("DocId").getValue().toString();
+                        String name1 = datas.child("USN").getValue().toString();
+                        String surname1 = datas.child("Name").getValue().toString();
+                        String marks1 = datas.child("Marks").getValue().toString();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Toast.makeText(ScanActivity.this, "Fail to add data " + error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+
+        ida.setText("ID: " + ida1);
+        namea.setText("NAME: " + namea1);
+        surname.setText("ROLL NO: " + surnamea1);
+        marks.setText("MARKS: " + marksa1);
     }
 
     private void buildTagViews(NdefMessage[] msgs) {
@@ -130,44 +176,70 @@ public class ScanActivity extends AppCompatActivity {
 
             text = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
             tvNFCContent.setText("NFC CONTENT: " + text);
+        } catch (Exception e) {
 
-            //String id = tvNFCContent.getText().toString();
+        }
 
-            // if(id.equals(String.valueOf(""))){
-            //tvNFCContent.setError("Enter id to get data");
-            // }
-            String ida1 = null;
-            String namea1 = null;
-            String surnamea1 = null;
-            String marksa1 = null;
-            
-          
-            ida.setText("ID: " + ida1);
-            namea.setText("NAME: " + namea1);
-            surname.setText("ROLL NO: " + surnamea1);
-            marks.setText("MARKS: " + marksa1);
-            try {
+        //String id = tvNFCContent.getText().toString();
 
+        // if(id.equals(String.valueOf(""))){
+        //tvNFCContent.setError("Enter id to get data");
+        // }
+        text = "10";
+        String ida1 = null;
+        String namea1 = null;
+        String surnamea1 = null;
+        String marksa1 = null;
 
-                // Show Image from DB in ImageView
-                imgLoaded.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        //imgLoaded.setImageBitmap(Utils.getImage(bytes));
+        if (text != null) {
 
+            myRef = FirebaseDatabase.getInstance().getReference("Details");
+
+            myRef.orderByChild("Id").equalTo("10").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot datas : dataSnapshot.getChildren()) {
+                        String ida1 = datas.child("DocId").getValue().toString();
+                        String name1 = datas.child("USN").getValue().toString();
+                        String surname1 = datas.child("Name").getValue().toString();
+                        String marks1 = datas.child("Marks").getValue().toString();
                     }
-                });
-                imgLoaded.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //Intent i1 = new Intent(Scan_page.this, Show_image.class);
-                        //i1.putExtra("picture", bytes);
-                        //startActivity(i1);
-                    }
-                });
-            } catch (Exception e) {
-                Toast.makeText(this, "Error " + e, Toast.LENGTH_LONG).show();
-            }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Toast.makeText(ScanActivity.this, "Fail to add data " + error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+
+        ida.setText("ID: " + ida1);
+        namea.setText("NAME: " + namea1);
+        surname.setText("ROLL NO: " + surnamea1);
+        marks.setText("MARKS: " + marksa1);
+        try {
+
+
+            // Show Image from DB in ImageView
+            imgLoaded.post(new Runnable() {
+                @Override
+                public void run() {
+                    //imgLoaded.setImageBitmap(Utils.getImage(bytes));
+
+                }
+            });
+            imgLoaded.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Intent i1 = new Intent(Scan_page.this, Show_image.class);
+                    //i1.putExtra("picture", bytes);
+                    //startActivity(i1);
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(this, "Error " + e, Toast.LENGTH_LONG).show();
+        }
           /* /
            // if (res.moveToFirst() && res!=null) {
 
@@ -177,12 +249,12 @@ public class ScanActivity extends AppCompatActivity {
             surname.setText(surnamea);
             marks.setText(marksa);*/
 
-        } catch (UnsupportedEncodingException e) {
+      /*  } catch (UnsupportedEncodingException e) {
             Log.e("UnsupportedEncoding", e.toString());
-        }
+        }*/
 
 
-    }/*
+    }
 
 
     /******************************************************************************
@@ -261,4 +333,7 @@ public class ScanActivity extends AppCompatActivity {
         writeMode = false;
         nfcAdapter.disableForegroundDispatch(this);
     }
+
+
 }
+

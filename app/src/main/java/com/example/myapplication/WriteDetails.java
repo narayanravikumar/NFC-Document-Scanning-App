@@ -3,24 +3,15 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import static java.lang.Boolean.TRUE;
 
 public class WriteDetails extends AppCompatActivity {
 
@@ -62,7 +53,7 @@ public class WriteDetails extends AppCompatActivity {
         Intent i = getIntent();
         String str = i.getStringExtra("message");
         textd.setText(str);
-        btnOpenGallery.setOnClickListener(new View.OnClickListener() {
+       /* btnOpenGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openImageChooser();
@@ -77,7 +68,7 @@ public class WriteDetails extends AppCompatActivity {
     }
 
 
-    void openImageChooser() {
+    /*void openImageChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -110,14 +101,14 @@ public class WriteDetails extends AppCompatActivity {
                       myRef = database.getReference("Details");
                       details = new Details();
 
-                    Boolean isInserted = TRUE;
+                    /*Boolean isInserted = TRUE;
                     if (isInserted == true)
                         Toast.makeText(WriteDetails.this, "PLEASE VERIFY YOUR DATA", Toast.LENGTH_LONG).show();
                     else
                         Toast.makeText(WriteDetails.this, "Data could not be Inserted", Toast.LENGTH_LONG).show();
+*/
 
-
-                    String str1 = editTextId.getText().toString();
+                   /* String str1 = editTextId.getText().toString();
                     String str0 = textd.getText().toString();
                     Intent i1 = new Intent(WriteDetails.this, WriteConfirm.class);
                     i1.putExtra("message1", str1);
@@ -147,7 +138,8 @@ public class WriteDetails extends AppCompatActivity {
 
                     //i1.putExtra("picture", b);
                     startActivity(i1);
-                } catch (Exception nullpointer) {
+                } catch (Exception e) {
+
                 }
 
 
@@ -174,7 +166,7 @@ public class WriteDetails extends AppCompatActivity {
                 // inside the method of on Data change we are setting
                 // our object class to our database reference.
                 // data base reference will sends data to firebase.
-                myRef.setValue(details);
+                myRef.child(id).setValue(details);
 
                 // after adding this data we are showing toast message.
                 Toast.makeText(WriteDetails.this, "data added", Toast.LENGTH_SHORT).show();
@@ -281,5 +273,7 @@ public class WriteDetails extends AppCompatActivity {
         builder.setTitle(title);
         builder.setMessage(message);
         builder.show();
-    }*/
+    */
+    }
+
 }

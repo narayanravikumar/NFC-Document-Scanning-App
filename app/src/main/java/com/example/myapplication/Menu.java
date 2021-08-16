@@ -17,6 +17,7 @@ public class Menu extends AppCompatActivity {
         Button write = (Button) findViewById(R.id.btn_write);
         Button  read = (Button) findViewById(R.id.btn_read);
 
+
         write.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -32,6 +33,8 @@ public class Menu extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
 
     }
 

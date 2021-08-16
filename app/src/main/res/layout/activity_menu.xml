@@ -22,4 +22,6 @@
         android:layout_below="@+id/btn_write"
         android:text="@string/message_read_tag"
         style="@style/Widget.AppCompat.Button.Colored"/>
+
+
 </RelativeLayout>
