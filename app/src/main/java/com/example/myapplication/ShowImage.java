@@ -36,20 +36,30 @@ public class ShowImage extends AppCompatActivity {
     private ScaleGestureDetector scaleGestureDetector;
     private float mScaleFactor = 1.0f;
     ImageView imageView;
+    FirebaseStorage storage;
+    StorageReference storageReference;
+    String strid;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_image);
+
+
+
+
+
+
         Intent i0 = getIntent();
-        String strid = i0.getStringExtra("id");
+        strid = i0.getStringExtra("id");
 
 
         if (strid != null) {
 
             myRef = FirebaseDatabase.getInstance().getReference("details");
-            Toast.makeText(getApplicationContext(), "data  1 Exist", Toast.LENGTH_LONG).show();
+            // Toast.makeText(getApplicationContext(), "data  1 Exist", Toast.LENGTH_LONG).show();
             int value = Integer.parseInt(strid);
 
             Query cheruser = myRef.orderByChild("id").equalTo(strid);
@@ -109,6 +119,5 @@ public class ShowImage extends AppCompatActivity {
             return true;
         }
     }
-
 
 }

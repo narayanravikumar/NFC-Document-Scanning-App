@@ -28,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.NotNull;
 import com.google.firebase.storage.FirebaseStorage;
@@ -74,7 +75,6 @@ public class WriteDetails<context> extends AppCompatActivity {
         editName = (EditText) findViewById(R.id.editText_name);
         editSurname = (EditText) findViewById(R.id.editText_surname);
         editMarks = (EditText) findViewById(R.id.editText_Marks);
-        btnUpdate = (Button) findViewById(R.id.button_update);
         btnDelete = (Button) findViewById(R.id.button_delete);
 
 
@@ -148,9 +148,34 @@ public class WriteDetails<context> extends AppCompatActivity {
                             addDatatoFirebase(str1, str0 , str3, str2, str4);
                             startActivity(i1);
                         }
-                    }, 2000);   //5 seconds
+                    }, 2000);   //2 seconds
 
                 }
+            }
+        });
+
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Delete();
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                Query applesQuery = ref.child("details").orderByChild("id").equalTo(str1);
+
+                applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                            appleSnapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e(TAG, "onCancelled", databaseError.toException());
+                    }
+                });
+
             }
         });
 
@@ -159,7 +184,31 @@ public class WriteDetails<context> extends AppCompatActivity {
 
     }
 
-   private  void upload(){
+    private  void Delete(){
+
+
+        StorageReference ref= storageReference.child(str1);
+        ref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+
+                Toast.makeText(getApplicationContext(),"Deleted Data Base",Toast.LENGTH_LONG).show();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull @org.jetbrains.annotations.NotNull Exception e) {
+
+                Toast.makeText(getApplicationContext(),"Unable to Deleted Data Base",Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+
+    }
+
+
+    private  void upload(){
 
 
         StorageReference ref= storageReference.child(str1);
@@ -168,8 +217,7 @@ public class WriteDetails<context> extends AppCompatActivity {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(getApplicationContext(),"Image Uploaded",Toast.LENGTH_LONG).show();
             }
-        })
-        .addOnFailureListener(new OnFailureListener() {
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull @NotNull Exception e) {
                 Log.e("Errorrrr",e.toString());
@@ -197,13 +245,6 @@ public class WriteDetails<context> extends AppCompatActivity {
 
 
 
-     /*   details.setId(id);
-        details.setDocId(Docid);
-        details.setUSN(Usn);
-        details.setName(Name);
-        details.setMarks(Marks);
-       */ // we are use add value event listener method
-        // which is called with database reference.
         myRef.addValueEventListener(new ValueEventListener() {
 
 
@@ -225,20 +266,6 @@ public class WriteDetails<context> extends AppCompatActivity {
                 Toast.makeText(WriteDetails.this, "Fail to add data " + error, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void SelectImage() {
-
-        // Defining Implicit Intent to mobile gallery
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        Intent intent1 = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        try {
-            activityResultLauncher.launch(intent1);
-        } catch (Exception e) {
-            Log.e("helllo error", e.toString());
-        }
     }
 
     public void onBackPressed() {

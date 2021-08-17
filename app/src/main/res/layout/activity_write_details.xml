@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,15 +8,18 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
 
 
             <TextView
                 android:id="@+id/tagid"
-                android:layout_height="50dp"
                 android:layout_width="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="2"
                 android:backgroundTint="@color/background_white"
                 android:gravity="start"
@@ -33,22 +35,22 @@
                 android:layout_height="100px"
                 android:layout_alignLeft="@id/tagid"
                 android:layout_marginLeft="101dp"
-                android:textSize="50px"
+                android:layout_marginTop="3dp"
                 android:textColor="@color/background_white"
-                android:layout_marginTop="3dp" />
+                android:textSize="50px" />
 
             <EditText
                 android:id="@+id/editText_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
                 android:layout_below="@id/tagid1"
+                android:layout_weight="2"
                 android:backgroundTint="@color/background_white"
-                android:hint="    ID"
-                android:textColor="@color/background_white"
                 android:gravity="center_horizontal"
+                android:hint="    ID"
                 android:inputType="number"
                 android:maxLength="8"
+                android:textColor="@color/background_white"
                 android:textColorHint="@color/background_white" />
 
 
@@ -56,12 +58,12 @@
                 android:id="@+id/editText_surname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/background_white"
-                android:backgroundTint="@color/background_white"
-                android:textColorHint="@color/background_white"
-                android:gravity="center_horizontal"
                 android:layout_below="@id/editText_id"
-                android:hint="Roll Number"/>
+                android:backgroundTint="@color/background_white"
+                android:gravity="center_horizontal"
+                android:hint="Roll Number"
+                android:textColor="@color/background_white"
+                android:textColorHint="@color/background_white" />
 
 
             <EditText
@@ -69,52 +71,51 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/editText_surname"
+                android:backgroundTint="@color/background_white"
+                android:gravity="center_horizontal"
                 android:hint="Full Name"
                 android:textColor="@color/background_white"
-                android:textColorHint="@color/background_white"
-                android:gravity="center_horizontal"
-                android:backgroundTint="@color/background_white"
-                />
-
+                android:textColorHint="@color/background_white" />
 
 
             <EditText
                 android:id="@+id/editText_Marks"
                 android:layout_width="match_parent"
-                android:textColor="@color/background_white"
-                android:gravity="center_horizontal"
-                android:backgroundTint="@color/background_white"
-                android:textColorHint="@color/background_white"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/editText_name"
-                android:inputType="number"
+                android:backgroundTint="@color/background_white"
+                android:gravity="center_horizontal"
                 android:hint="Marks"
+                android:inputType="number"
+                android:textColor="@color/background_white"
+                android:textColorHint="@color/background_white"
 
                 />
+
             <RelativeLayout
+                android:id="@+id/btnSelectImage1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/editText_Marks"
-                android:id="@+id/btnSelectImage1">
+                android:layout_below="@+id/editText_Marks">
 
                 <ImageView
                     android:id="@+id/imgView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:scaleType="fitXY"
+                    android:layout_weight="1"
                     android:adjustViewBounds="true"
-                    android:layout_weight="1"/>
+                    android:scaleType="fitXY" />
 
                 <Button
                     android:id="@+id/btnSelectImage"
                     android:layout_width="150dp"
                     android:layout_height="35dp"
-                    android:background="@color/background_white"
-                    android:layout_marginBottom="10dp"
                     android:layout_below="@id/imgView"
-                    android:gravity="center"
-                    android:layout_marginTop="20dp"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/background_white"
+                    android:gravity="center"
                     android:text="Select Image" />
             </RelativeLayout>
 
@@ -123,60 +124,27 @@
                 android:id="@+id/button_add"
                 android:layout_width="200dp"
                 android:layout_height="50dp"
-                android:textColor="@color/background_white"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="left"
                 android:layout_below="@+id/btnSelectImage1"
-                android:text="Add Data"/>
-
-            <Button
-                android:id="@+id/button_view"
-                android:layout_width="150dp"
-                android:layout_height="50dp"
-                android:textColor="@color/background_white"
                 android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_below="@id/button_add"
-                android:text="View"        />
-
-            <Button
-                android:id="@+id/button_viewAll"
-                android:layout_width="150dp"
-                android:layout_height="50dp"
-                android:textColor="@color/background_white"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_toRightOf="@id/button_view"
-                android:layout_below="@id/button_add"
-                android:text="View All"
-                />
-
-            <Button
-                android:id="@+id/button_update"
-                android:layout_width="150dp"
-                android:layout_height="50dp"
-                android:textColor="@color/background_white"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_below="@id/button_view"
-                android:text="Update"
-                />
+                android:text="UPDATE"
+                android:textColor="@color/background_white" />
 
 
             <Button
                 android:id="@+id/button_delete"
-                android:layout_width="150dp"
+                android:layout_width="2000dp"
                 android:layout_height="50dp"
-                android:textColor="@color/background_white"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_below="@id/button_view"
-                android:layout_toRightOf="@+id/button_update"
-                android:text="Delete"
-                />
-    </RelativeLayout>
-</ScrollView>
+                android:layout_toRightOf="@+id/button_add"
+                android:text="DELETE"
+                android:textColor="@color/background_white" />
+
+
+        </RelativeLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

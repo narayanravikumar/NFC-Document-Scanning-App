@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">NFC</string>
     <string name="message_write_error">Error Writing Message !</string>
     <string name="message_write_success">Successfully written to Tag !</string>
     <string name="message_write_progress">Writing to Tag..</string>

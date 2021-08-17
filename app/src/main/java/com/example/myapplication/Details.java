@@ -2,11 +2,11 @@ package com.example.myapplication;
 
 public class Details {
 
-     String USN;
-  String Id;
-  String DocId;
+    String USN;
+    String Id;
+    String DocId;
     String Marks;
-     String Name;
+    String Name;
     // string variable for
     // storing employee name
 

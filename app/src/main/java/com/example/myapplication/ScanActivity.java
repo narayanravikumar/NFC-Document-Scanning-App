@@ -80,20 +80,20 @@ public class ScanActivity extends AppCompatActivity {
 
         imgLoaded = (ImageView) findViewById(R.id.Imageshow);
 
-       nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-       if (nfcAdapter == null) {
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (nfcAdapter == null) {
             // Stop here, we definitely need NFC
             Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
             finish();
         }
         readFromIntent(getIntent());
 
-       btn.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               Detail();
-           }
-       });
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Detail();
+            }
+        });
 
 
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
@@ -150,7 +150,7 @@ public class ScanActivity extends AppCompatActivity {
 
             text = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
             tvNFCContent.setText("NFC CONTENT: " + text);
-            Toast.makeText(getApplicationContext(),"Text="+text,Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(),"Text="+text,Toast.LENGTH_LONG).show();
             strid = text;
         } catch (Exception e) {
 
@@ -167,10 +167,10 @@ public class ScanActivity extends AppCompatActivity {
         if (strid != null) {
 
             myRef = FirebaseDatabase.getInstance().getReference("details");
-            Toast.makeText(getApplicationContext(),"data  1 Exist",Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(),"data  1 Exist",Toast.LENGTH_LONG).show();
             int value=Integer.parseInt(strid);
 
-           Query cheruser = myRef.orderByChild("id").equalTo(strid);
+            Query cheruser = myRef.orderByChild("id").equalTo(strid);
 
             cheruser.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -178,7 +178,7 @@ public class ScanActivity extends AppCompatActivity {
 
                     if(dataSnapshot.exists()) {
 
-                        Toast.makeText(getApplicationContext(),"data Exist",Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(),"data Exist",Toast.LENGTH_LONG).show();
                         String ida1 = dataSnapshot.child(strid).child("docId").getValue().toString();
                         String name1 = dataSnapshot.child(strid).child("usn").getValue().toString();
                         String surname1 = dataSnapshot.child(strid).child("name").getValue().toString();
@@ -204,7 +204,7 @@ public class ScanActivity extends AppCompatActivity {
                                     }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull @NotNull Exception e) {
-                                    Toast.makeText(getApplicationContext(),"success", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(),"Failed", Toast.LENGTH_LONG).show();
                                 }
                             });
 
