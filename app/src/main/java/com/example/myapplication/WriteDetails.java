@@ -1,19 +1,40 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatImageView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.NotNull;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
-public class WriteDetails extends AppCompatActivity {
+public class WriteDetails<context> extends AppCompatActivity {
 
 
     public static final int SELECT_PICTURE = 100;
@@ -22,12 +43,20 @@ public class WriteDetails extends AppCompatActivity {
     EditText editTextId, editName, editSurname, editMarks;
     Button btnAddData, btngetData, btnUpdate, btnDelete, btnviewAll, btnOpenGallery;
     TextView textd, textd1;
-    AppCompatImageView imgView;
+    //AppCompatImageView imgView;
+    private Uri filePath;
+    Uri imageUri;
+
+    ImageView imgView;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
+    FirebaseStorage storage;
+    StorageReference storageReference;
     Details details;
-
+    String str1;
+    int PICK_IMAGE = 200;
+    ActivityResultLauncher<Intent> activityResultLauncher;
 
 
 
@@ -35,128 +64,145 @@ public class WriteDetails extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_details);
-
+        textd = findViewById(R.id.tagid1);
+        btnOpenGallery = (Button) findViewById(R.id.btnSelectImage);
+        imgView = (ImageView) findViewById(R.id.imgView);
+        storage= FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+        btnAddData = (Button) findViewById(R.id.button_add);
         editTextId = (EditText) findViewById(R.id.editText_id);
         editName = (EditText) findViewById(R.id.editText_name);
         editSurname = (EditText) findViewById(R.id.editText_surname);
         editMarks = (EditText) findViewById(R.id.editText_Marks);
-        btnAddData = (Button) findViewById(R.id.button_add);
-        btngetData = (Button) findViewById(R.id.button_view);
-        btnviewAll = (Button) findViewById(R.id.button_viewAll);
         btnUpdate = (Button) findViewById(R.id.button_update);
         btnDelete = (Button) findViewById(R.id.button_delete);
-        btnOpenGallery = (Button) findViewById(R.id.btnSelectImage);
-        imgView = findViewById(R.id.imgView);
-        textd = findViewById(R.id.tagid1);
 
 
-        Intent i = getIntent();
-        String str = i.getStringExtra("message");
-        textd.setText(str);
-       /* btnOpenGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openImageChooser();
-            }
-        });
-        AddData();
-        //getData();
-        //updateData();
-        //deleteData();
-        //viewAll();
+        try {
+            activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
 
-    }
+                        // Get the Uri of data
+                        Bundle bumdle = result.getData().getExtras();
+                        Bitmap bitmap = (Bitmap) bumdle.get("data");
+                        imgView.setImageBitmap(bitmap);
 
-
-    /*void openImageChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_PICTURE) {
-                selectedImageUri = data.getData();
-                if (null != selectedImageUri) {
-                    imgView.setImageURI(selectedImageUri);
-                } else {
-                    Toast.makeText(this, "Error and null", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
+            });
+        }catch (Exception e){
+            Log.e("erooooooo",e.toString());
         }
-    }
 
 
-    public void AddData() {
-
+        try{
+            Intent i = getIntent();
+            str1 = i.getStringExtra("message");
+            textd.setText(str1);
+            btnOpenGallery.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //SelectImage();
+                    Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                    startActivityForResult(gallery, PICK_IMAGE);
+                }
+            });}catch (Exception e){
+            Log.e("erorre",e.toString());
+        }
 
         btnAddData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                  try {
 
-                      myRef = database.getReference("Details");
-                      details = new Details();
-
-                    /*Boolean isInserted = TRUE;
-                    if (isInserted == true)
-                        Toast.makeText(WriteDetails.this, "PLEASE VERIFY YOUR DATA", Toast.LENGTH_LONG).show();
-                    else
-                        Toast.makeText(WriteDetails.this, "Data could not be Inserted", Toast.LENGTH_LONG).show();
-*/
-
-                   /* String str1 = editTextId.getText().toString();
-                    String str0 = textd.getText().toString();
-                    Intent i1 = new Intent(WriteDetails.this, WriteConfirm.class);
-                    i1.putExtra("message1", str1);
-                    i1.putExtra("message0", str0);
+                upload();
+                String str0 = editTextId.getText().toString();
+                Intent i1 = new Intent(WriteDetails.this, WriteConfirm.class);
+                i1.putExtra("message1", str1);
+                i1.putExtra("message0", str0);
 
 
-                    String str2 = editName.getText().toString();
-                    i1.putExtra("message2", str2);
+                String str2 = editName.getText().toString();
+                i1.putExtra("message2", str2);
 
-                    String str3 = editSurname.getText().toString();
-                    i1.putExtra("message3", str3);
-
-
-                    String str4 = editMarks.getText().toString();
-                    i1.putExtra("message4", str4);
-
-                      if (TextUtils.isEmpty(str1) && TextUtils.isEmpty(str0) && TextUtils.isEmpty(str2) && TextUtils.isEmpty(str3) && TextUtils.isEmpty(str4)) {
-                          // if the text fields are empty
-                          // then show the below message.
-                          Toast.makeText(WriteDetails.this, "Please add some data.", Toast.LENGTH_SHORT).show();
-                      } else {
-                          // else call the method to add
-                          // data to our database.
-                          addDatatoFirebase(str0, str1 , str2, str3, str4);
-                      }
+                String str3 = editSurname.getText().toString();
+                i1.putExtra("message3", str3);
 
 
-                    //i1.putExtra("picture", b);
-                    startActivity(i1);
-                } catch (Exception e) {
+                String str4 = editMarks.getText().toString();
+                i1.putExtra("message4", str4);
+                i1.putExtra("picture", imageUri);
+
+                if (TextUtils.isEmpty(str1) && TextUtils.isEmpty(str0) && TextUtils.isEmpty(str2) && TextUtils.isEmpty(str3) && TextUtils.isEmpty(str4)) {
+                    // if the text fields are empty
+                    // then show the below message.
+                    Toast.makeText(WriteDetails.this, "Please add some data.", Toast.LENGTH_SHORT).show();
+                } else {
+                    // else call the method to add
+                    // data to our database.
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            // yourMethod();
+                            addDatatoFirebase(str1, str0 , str3, str2, str4);
+                            startActivity(i1);
+                        }
+                    }, 2000);   //5 seconds
 
                 }
+            }
+        });
 
 
+
+
+    }
+
+   private  void upload(){
+
+
+        StorageReference ref= storageReference.child(str1);
+        ref.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(getApplicationContext(),"Image Uploaded",Toast.LENGTH_LONG).show();
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull @NotNull Exception e) {
+                Log.e("Errorrrr",e.toString());
+                Toast.makeText(getApplicationContext(),"Image Uploaded Failed",Toast.LENGTH_LONG).show();
             }
         });
 
 
     }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE){
+            imageUri = data.getData();
+            imgView.setImageURI(imageUri);
+        }
+    }
+
     private void addDatatoFirebase(String id, String Docid, String Usn, String Name, String Marks) {
         // below 3 lines of code is used to set
         // data in our object class.
-        details.setId(id);
+        database=FirebaseDatabase.getInstance();
+        myRef = database.getReference("details");
+        details = new Details(id,Docid,Usn,Name,Marks);
+
+
+
+     /*   details.setId(id);
         details.setDocId(Docid);
         details.setUSN(Usn);
         details.setName(Name);
         details.setMarks(Marks);
-        // we are use add value event listener method
+       */ // we are use add value event listener method
         // which is called with database reference.
         myRef.addValueEventListener(new ValueEventListener() {
 
@@ -181,99 +227,24 @@ public class WriteDetails extends AppCompatActivity {
         });
     }
 
+    private void SelectImage() {
 
-    /*public void getData() {
-        btngetData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String id = editTextId.getText().toString();
-
-                if (id.equals(String.valueOf(""))) {
-                    editTextId.setError("Enter id to get data");
-                    return;
-                }
-                Cursor res = myDb.getData(id);
-                String data = null;
-                if (res.moveToFirst()) {
-                    data = "Id:" + res.getString(0) + "\n" + "Name :" + res.getString(1) + "\n\n" + "Surname :" + res.getString(2) + "\n\n" + "Marks :" + res.getString(3) + "\n\n";
-                }
-                showMessage("Data", data);
-            }
-        });
+        // Defining Implicit Intent to mobile gallery
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        Intent intent1 = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        try {
+            activityResultLauncher.launch(intent1);
+        } catch (Exception e) {
+            Log.e("helllo error", e.toString());
+        }
     }
 
-    public void viewAll() {
-        btnviewAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Cursor res = myDb.getAllData();
-                if (res.getCount() == 0) {
-                    // show message
-                    showMessage("Error", "Nothing found");
-                    return;
-                }
-                StringBuffer buffer = new StringBuffer();
-                while (res.moveToNext()) {
-                    buffer.append("Id:" + res.getString(0) + "\n");
-                    buffer.append("Name :" + res.getString(1) + "\n\n");
-                    buffer.append("Surname :" + res.getString(2) + "\n\n");
-                    buffer.append("Marks :" + res.getString(3) + "\n\n");
-                    buffer.append("TAG :" + res.getString(5) + "\n\n");
-                }
-                showMessage("Data", buffer.toString());
-            }
-        });
-    }
-
-    public void updateData() {
-        btnUpdate.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        InputStream iStream = null;
-                        try {
-                            iStream = getContentResolver().openInputStream(selectedImageUri);
-                            byte[] inputData = Utils.getBytes(iStream);
-
-                            boolean isUpdate = myDb.updateData(editTextId.getText().toString(),
-                                    editName.getText().toString(),
-                                    editSurname.getText().toString(), editMarks.getText().toString(), inputData);
-                            if (isUpdate == true)
-                                Toast.makeText(Write_page_1.this, "Data Update", Toast.LENGTH_LONG).show();
-                            else
-                                Toast.makeText(Write_page_1.this, "Data could not be Updated", Toast.LENGTH_LONG).show();
-                        } catch (Exception e) {
-
-                        }
-                    }
-                }
-        );
-    }
-
-    public void deleteData() {
-        btnDelete.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Integer deletedRows = myDb.deleteData(editTextId.getText().toString());
-                        if (deletedRows > 0)
-                            Toast.makeText(Write_page_1.this, "Data Deleted", Toast.LENGTH_LONG).show();
-                        else
-                            Toast.makeText(Write_page_1.this, "Data could not be Deleted", Toast.LENGTH_LONG).show();
-                    }
-                }
-        );
-    }
-
-
-    private void showMessage(String title, String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.create();
-        builder.setCancelable(true);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.show();
-    */
+    public void onBackPressed() {
+        Intent intent = new Intent(WriteDetails.this, Menu.class);
+        startActivity(intent);
     }
 
 }
+

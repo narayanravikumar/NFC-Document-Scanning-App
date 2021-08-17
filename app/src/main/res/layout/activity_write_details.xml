@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_grey"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-    <ScrollView android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background_grey">
-        <RelativeLayout
+    tools:context=".WriteDetails">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            tools:context="MainActivity">
 
             <TextView
                 android:id="@+id/tagid"
@@ -93,16 +92,18 @@
 
                 />
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/editText_Marks"
                 android:id="@+id/btnSelectImage1">
 
-                <view class="androidx.appcompat.app.AlertController$RecycleListView"
+                <ImageView
                     android:id="@+id/imgView"
-                    android:layout_width="500dp"
-                    android:layout_height="200dp"
-                    android:layout_marginBottom="5dp" />
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:layout_weight="1"/>
 
                 <Button
                     android:id="@+id/btnSelectImage"
@@ -176,9 +177,6 @@
                 android:layout_toRightOf="@+id/button_update"
                 android:text="Delete"
                 />
-
-
-
-        </RelativeLayout>
-    </ScrollView>
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,56 +2,65 @@ package com.example.myapplication;
 
 public class Details {
 
-    private static String USN;
-    private static String Id;
-    private static String DocId;
-    private static String Marks;
-    private static String Name;
+     String USN;
+  String Id;
+  String DocId;
+    String Marks;
+     String Name;
     // string variable for
-        // storing employee name
+    // storing employee name
 
+    public Details(String Id,String DocId, String USN, String Name,String Marks){
+        this.USN=USN;
+        this.Id=Id;
+        this.DocId=DocId;
+        this.Marks=Marks;
+        this.Name=Name;
 
-
-        // an empty constructor is
-        // required when using
-        // Firebase Realtime Database.
-        public Details() {
-
-        }
-
-        // created getter and setter methods
-        // for all our variables.
-        public String getStudentTag() {
-            return Id;
-        }
-        public String getStudentDocid() {
-            return DocId;
-        }
-        public String getStudentUsn() {
-            return USN;
-        }
-
-        public String getStudentName() {
-            return Name;
-        }
-        public String getStudentMarks() {
-            return Marks;
-        }
-
-    public static void setId(String Idd) {
-        Id = Idd;
     }
-    public static void setDocId(String DocIdd) {
-        DocId = DocIdd;
+
+    public Details() {
     }
-    public static void setUSN(String USNd) {
-        USN = USNd;
+
+    public String getUSN() {
+        return USN;
     }
-    public static void setName(String Named) {
-        Name = Named;
+
+    public void setUSN(String USN) {
+        this.USN = USN;
     }
-    public static void setMarks(String Marksd) {
-        Marks = Marksd;
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
+
+    public String getDocId() {
+        return DocId;
+    }
+
+    public void setDocId(String docId) {
+        DocId = docId;
+    }
+
+    public String getMarks() {
+        return Marks;
+    }
+
+    public void setMarks(String marks) {
+        Marks = marks;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String name) {
+        Name = name;
     }
 }
+
 

@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -19,14 +21,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -40,14 +52,16 @@ public class ScanActivity extends AppCompatActivity {
     IntentFilter writeTagFilters[];
     boolean writeMode;
     Tag myTag;
+    String strid;
     Context context;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
+    StorageReference mStorageRefernce;
 
 
     TextView tvNFCContent, ida, namea, marks, surname;
     TextView message;
-    Button btnWrite;
+    Button btn;
     ImageView imgLoaded;
 
     @Override
@@ -62,28 +76,9 @@ public class ScanActivity extends AppCompatActivity {
         surname = (TextView) findViewById(R.id.surname);
         marks = (TextView) findViewById(R.id.marks);
         message = (TextView) findViewById(R.id.edit_message);
-        btnWrite = (Button) findViewById(R.id.button);
+        btn = (Button) findViewById(R.id.Retreive);
 
         imgLoaded = (ImageView) findViewById(R.id.Imageshow);
-        btnWrite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (myTag == null) {
-                        Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_LONG).show();
-                    } else {
-                        write(message.getText().toString(), myTag);
-                        Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
-                    }
-                } catch (IOException e) {
-                    Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                } catch (FormatException e) {
-                    Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            }
-        });
 
        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
        if (nfcAdapter == null) {
@@ -91,13 +86,30 @@ public class ScanActivity extends AppCompatActivity {
             Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
             finish();
         }
-        Detail();
         readFromIntent(getIntent());
+
+       btn.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Detail();
+           }
+       });
+
 
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
         writeTagFilters = new IntentFilter[]{tagDetected};
+
+
+        imgLoaded.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(ScanActivity.this,ShowImage.class);
+                intent.putExtra("id",strid);
+                startActivity(intent);
+            }
+        });
 
 
     }
@@ -123,44 +135,6 @@ public class ScanActivity extends AppCompatActivity {
         }
     }
 
-    public void Detail() {
-        String text = "10";
-        String ida1 = null;
-        String namea1 = null;
-        String surnamea1 = null;
-        String marksa1 = null;
-
-        if (text != null) {
-
-            myRef = FirebaseDatabase.getInstance().getReference("Details");
-
-            //orderByChild("Id").equalTo("10").
-
-            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot datas : dataSnapshot.getChildren()) {
-                        String ida1 = datas.child("DocId").getValue().toString();
-                        String name1 = datas.child("USN").getValue().toString();
-                        String surname1 = datas.child("Name").getValue().toString();
-                        String marks1 = datas.child("Marks").getValue().toString();
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    Toast.makeText(ScanActivity.this, "Fail to add data " + error, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-
-        ida.setText("ID: " + ida1);
-        namea.setText("NAME: " + namea1);
-        surname.setText("ROLL NO: " + surnamea1);
-        marks.setText("MARKS: " + marksa1);
-    }
-
     private void buildTagViews(NdefMessage[] msgs) {
         if (msgs == null || msgs.length == 0) return;
 
@@ -176,9 +150,82 @@ public class ScanActivity extends AppCompatActivity {
 
             text = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
             tvNFCContent.setText("NFC CONTENT: " + text);
+            Toast.makeText(getApplicationContext(),"Text="+text,Toast.LENGTH_LONG).show();
+            strid = text;
         } catch (Exception e) {
 
         }
+    }
+
+    public void Detail() {
+        String text = null;
+        String ida1 = null;
+        String namea1 = null;
+        String surnamea1 = null;
+        String marksa1 = null;
+
+        if (strid != null) {
+
+            myRef = FirebaseDatabase.getInstance().getReference("details");
+            Toast.makeText(getApplicationContext(),"data  1 Exist",Toast.LENGTH_LONG).show();
+            int value=Integer.parseInt(strid);
+
+           Query cheruser = myRef.orderByChild("id").equalTo(strid);
+
+            cheruser.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    if(dataSnapshot.exists()) {
+
+                        Toast.makeText(getApplicationContext(),"data Exist",Toast.LENGTH_LONG).show();
+                        String ida1 = dataSnapshot.child(strid).child("docId").getValue().toString();
+                        String name1 = dataSnapshot.child(strid).child("usn").getValue().toString();
+                        String surname1 = dataSnapshot.child(strid).child("name").getValue().toString();
+                        String marks1 = dataSnapshot.child(strid).child("marks").getValue().toString();
+                        ida.setText("ID: " + ida1);
+                        namea.setText("NAME: " + surname1);
+                        surname.setText("ROLL NO: " + name1);
+                        marks.setText("MARKS: " + marks1);
+                        mStorageRefernce = FirebaseStorage.getInstance().getReference().child(strid);
+
+                        try {
+                            final File localFile = File.createTempFile("ram","jpg");
+                            mStorageRefernce.getFile(localFile)
+                                    .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                            Toast.makeText(getApplicationContext(),"success", Toast.LENGTH_LONG).show();
+                                            Bitmap bitmap= BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                                            ((ImageView) findViewById(R.id.Imageshow)).setImageBitmap(bitmap);
+
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull @NotNull Exception e) {
+                                    Toast.makeText(getApplicationContext(),"success", Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Toast.makeText(ScanActivity.this, "Fail to add data " + error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+
+
+    /*}
+
+
 
         //String id = tvNFCContent.getText().toString();
 
