@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+
+
 public class Details {
 
     String USN;

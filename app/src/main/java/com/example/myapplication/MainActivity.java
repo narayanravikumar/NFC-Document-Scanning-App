@@ -1,9 +1,8 @@
 package com.example.myapplication;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         registertv = (TextView) findViewById(R.id.tvRegister);
         loginbtn = (Button) findViewById(R.id.btnLogin);
         needhelpbtn = (Button) findViewById(R.id.btnNeedHelp);
+
+
         try {
             FileInputStream serviceAccount =
                     new FileInputStream("nfc-protector-firebase-adminsdk-h2y9l-803bb60a60.json");
@@ -72,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
                     String emailtext=email.getText().toString();
                     String passwordtext = password.getText().toString();
 
+
+
                     //authenticate the user
                     auth.signInWithEmailAndPassword(emailtext,passwordtext).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -79,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
                             if(task.isSuccessful()){
                                 Toast.makeText(getApplicationContext(),"Login Successful", Toast.LENGTH_LONG).show();
                                 Intent intent= new Intent(MainActivity.this, Menu.class);
+                                email.setText(null);
+                                password.setText(null);
                                 startActivity(intent);
                             }else{
                                 Toast.makeText(getApplicationContext(),"Login Error", Toast.LENGTH_LONG).show();
@@ -86,7 +92,12 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }else{
+                    Intent intent= new Intent(MainActivity.this, MainActivity.class);
+                    email.setText(null);
+                    password.setText(null);
                     Toast.makeText(getApplicationContext(),"Email and Password Should Not Be NULL",Toast.LENGTH_LONG).show();
+                    startActivity(intent);
+
                 }
             }
         });
@@ -99,28 +110,32 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.showmages, (android.view.Menu) menu);
-
-        return super.onCreateOptionsMenu((android.view.Menu) menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.download1:
-                Toast.makeText(getApplicationContext(), "Item 1 Selected", Toast.LENGTH_LONG).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     public void register(View view) {
         Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
         startActivity(intent);
 
+    }
+
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage("Do you want to Exit?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //if user pressed "yes", then he is allowed to exit from application
+                finish();
+            }
+        });
+        builder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //if user select "No", just cancel this dialog and continue with app
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert=builder.create();
+        alert.show();
     }
 }

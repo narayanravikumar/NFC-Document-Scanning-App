@@ -139,7 +139,7 @@ public class ScanActivity extends AppCompatActivity {
         if (msgs == null || msgs.length == 0) return;
 
         String text = "";
-//        String tagId = new String(msgs[0].getRecords()[0].getType());
+        //String tagId = new String(msgs[0].getRecords()[0].getType());
         byte[] payload = msgs[0].getRecords()[0].getPayload();
         String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16"; // Get the Text Encoding
         int languageCodeLength = payload[0] & 0063; // Get the Language Code, e.g. "en"
