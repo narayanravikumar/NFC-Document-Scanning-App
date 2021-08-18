@@ -1,3 +1,4 @@
+//Class file to retrieve image from Firebase and display
 package com.example.myapplication;
 
 import android.content.Intent;
@@ -55,7 +56,7 @@ public class ShowImage extends AppCompatActivity {
         Intent i0 = getIntent();
         strid = i0.getStringExtra("id");
 
-
+        //Retrieves tagid from previous activity and displays corresponding image in full screen
         if (strid != null) {
 
             myRef = FirebaseDatabase.getInstance().getReference("details");
@@ -106,10 +107,13 @@ public class ShowImage extends AppCompatActivity {
         }
     }
 
+    //Registers the touchEvent
     public boolean onTouchEvent(MotionEvent motionEvent) {
         scaleGestureDetector.onTouchEvent(motionEvent);
         return true;
     }
+
+    //It helps in scaling factor of the image
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {

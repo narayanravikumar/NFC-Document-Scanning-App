@@ -1,3 +1,4 @@
+//Shows the details that have been uploaded onto Firebase realtime database and Firebase storage
 package com.example.myapplication;
 
 import android.content.Intent;
@@ -33,6 +34,7 @@ public class WriteConfirm extends AppCompatActivity {
     FirebaseStorage storage12 = FirebaseStorage.getInstance();
     StorageReference storageReference;
 
+    //Retrieve details from previous activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +72,7 @@ public class WriteConfirm extends AppCompatActivity {
         marks.setText(str4);
         String img = tagid.getText().toString();
 
+        //When clicked on the image it shows the image in fullscreen mode and shows image activity
         imgSet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +86,8 @@ public class WriteConfirm extends AppCompatActivity {
 
         //storageReference = storage12.getReferenceFromUrl("gs://nfc-protector.appspot.com").child("ram.jpg");
 
+
+        //Retrieves image from Firebase storage
         storageReference = FirebaseStorage.getInstance().getReference().child(img);
         chechImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +121,7 @@ public class WriteConfirm extends AppCompatActivity {
 
     }
 
+    //Back press goes from WriteConfirm to Menu
     public void onBackPressed() {
         Intent intent = new Intent(WriteConfirm.this, Menu.class);
         startActivity(intent);

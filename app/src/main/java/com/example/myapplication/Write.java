@@ -1,3 +1,4 @@
+//Class file to write details onto tagid and upload onto firebase
 package com.example.myapplication;
 
 import android.app.PendingIntent;
@@ -93,10 +94,7 @@ public class Write extends AppCompatActivity {
         writeTagFilters = new IntentFilter[] { tagDetected };
     }
 
-
-    /******************************************************************************
-     **********************************Read From NFC Tag***************************
-     ******************************************************************************/
+    //Read from NFC tag
     private void readFromIntent(Intent intent) {
         String action = intent.getAction();
         NdefMessage[] msgs = null;
@@ -134,9 +132,7 @@ public class Write extends AppCompatActivity {
     }
 
 
-    /******************************************************************************
-     **********************************Write to NFC Tag****************************
-     ******************************************************************************/
+    //Write to NFC tag
     private void write(String text, Tag tag) throws IOException, FormatException {
         NdefRecord[] records = { createRecord(text) };
         NdefMessage message = new NdefMessage(records);
@@ -194,17 +190,13 @@ public class Write extends AppCompatActivity {
     }
 
 
-
-    /******************************************************************************
-     **********************************Enable Write********************************
-     ******************************************************************************/
+    //Enable write
     private void WriteModeOn(){
         writeMode = true;
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, writeTagFilters, null);
     }
-    /******************************************************************************
-     **********************************Disable Write*******************************
-     ******************************************************************************/
+
+    //Disable write
     private void WriteModeOff(){
         writeMode = false;
         nfcAdapter.disableForegroundDispatch(this);

@@ -1,3 +1,4 @@
+//Class file to perform registration activity
 package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +17,6 @@ public class RegistrationActivity extends AppCompatActivity {
     EditText username,usn, email,pass,repass;
     FirebaseAuth fauth;
     */
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

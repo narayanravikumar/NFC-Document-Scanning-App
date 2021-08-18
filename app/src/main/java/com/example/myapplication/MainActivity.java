@@ -1,3 +1,4 @@
+/* Class file that connects to firebase in order to retrieve login credentials as well as cross check the right credentials with custom authentication*/
 package com.example.myapplication;
 
 import android.content.DialogInterface;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     EditText email,password;
     FirebaseAuth auth;
 
+    //Main method
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         loginbtn = (Button) findViewById(R.id.btnLogin);
         needhelpbtn = (Button) findViewById(R.id.btnNeedHelp);
 
-
+        //Connecting to Firebase
         try {
             FileInputStream serviceAccount =
                     new FileInputStream("nfc-protector-firebase-adminsdk-h2y9l-803bb60a60.json");
@@ -67,14 +69,13 @@ public class MainActivity extends AppCompatActivity {
         auth= FirebaseAuth.getInstance(FirebaseApp.getInstance("active"));
 
 
+        //Task to verify the data in Firebase with user details
         loginbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(email != null && password != null){
                     String emailtext=email.getText().toString();
                     String passwordtext = password.getText().toString();
-
-
 
                     //authenticate the user
                     auth.signInWithEmailAndPassword(emailtext,passwordtext).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -97,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
                     password.setText(null);
                     Toast.makeText(getApplicationContext(),"Email and Password Should Not Be NULL",Toast.LENGTH_LONG).show();
                     startActivity(intent);
-
                 }
             }
         });
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+    //Goes to register page
     public void register(View view) {
         Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
         startActivity(intent);

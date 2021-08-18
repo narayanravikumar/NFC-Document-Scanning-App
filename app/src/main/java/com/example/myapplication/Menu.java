@@ -1,3 +1,4 @@
+//Displays the list of actions the user can perform in the app
 package com.example.myapplication;
 
 import android.content.Intent;
@@ -14,7 +15,6 @@ public class Menu extends AppCompatActivity {
 
     boolean doubleBackToExitPressedOnce = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,7 +23,7 @@ public class Menu extends AppCompatActivity {
         Button write = (Button) findViewById(R.id.btn_write);
         Button  read = (Button) findViewById(R.id.btn_read);
 
-
+        //Moves to write page
         write.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -32,6 +32,7 @@ public class Menu extends AppCompatActivity {
             }
         });
 
+        //Moves to ScanActivity page
         read.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,8 +44,8 @@ public class Menu extends AppCompatActivity {
 
 
     }
-
     @Override
+
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
@@ -62,7 +63,5 @@ public class Menu extends AppCompatActivity {
             }
         }, 2000);
     }
-
-
 
 }

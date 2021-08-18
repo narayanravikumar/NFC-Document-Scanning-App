@@ -1,7 +1,7 @@
+//Sets data to Firebase realtime database. It is the standard way to set a data to firebase realtime database
 package com.example.myapplication;
 
-
-
+//Class to set and retrieve details from Firebase
 public class Details {
 
     String USN;
