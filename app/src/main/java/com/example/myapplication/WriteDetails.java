@@ -83,7 +83,6 @@ public class WriteDetails<context> extends AppCompatActivity {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-
                         // Get the Uri of data
                         Bundle bumdle = result.getData().getExtras();
                         Bitmap bitmap = (Bitmap) bumdle.get("data");
